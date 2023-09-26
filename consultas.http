@@ -26,7 +26,7 @@ Content-Type: application/json
 }
 
 ### Borrado de un producto
-DELETE http://localhost:1234/productos/8
+DELETE http://localhost:1234/productos/11
 
 
 ### Obtencion de todos los usuarios
@@ -38,7 +38,7 @@ GET http://localhost:1234/usuarios
 GET http://localhost:1234/usuarios/5
 
 
-### Agregado de un producto nuevo, el body lleva el json con el objeto
+### Agregado de un usuario nuevo, el body lleva el json con el objeto
 POST http://localhost:1234/usuarios
 Content-Type: application/json
 
@@ -60,7 +60,7 @@ Content-Type: application/json
 }
 
 ### Borrado de un usuario
-DELETE http://localhost:1234/usuarios/8
+DELETE http://localhost:1234/usuarios/11
 
 ### Obtener el precio de un producto que se indica por id
 
@@ -80,4 +80,4 @@ GET http://localhost:1234/usuarios/telefono/6
 GET http://localhost:1234/usuarios/nombres/7 
 
 ### Obtener el total de stock de productos actuales
-GET http://localhost:1234/productos/total/
+GET http://localhost:1234/products/total/

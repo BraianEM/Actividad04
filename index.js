@@ -14,20 +14,6 @@ app.get('/', (req, res) => {
     res.status(200).send(html)
 })
 
-// Ejercicio 10 //
-
-app.get('/productos/total/', (req, res) => {
-    try {
-        // Calcula la sumatoria de los precios individuales de todos los productos
-        const precioTotal = datos.productos.reduce((total, producto) => total + producto.precio, 0);
-
-        // Devuelve el precio total
-        res.status(200).json({ precioTotal: precioTotal.toFixed(2) }); // Limita el número de decimales a 2
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
-    }
-});
 
 app.get('/productos', (req, res) =>{
     try {
@@ -218,7 +204,7 @@ app.patch('/usuarios/:id', (req, res) => {
             userAActualizar.telefono = data.telefono
         }
 
-        res.status(200).send('Producto actualizado')
+        res.status(200).send('Usuario actualizado')
     })
 })
 
@@ -257,8 +243,8 @@ app.get('/productos/precios/:id', (req, res) => {
         // Devuelve el precio del producto
         res.status(200).json({ precio: producto.precio });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        console.error(error)
+        res.status(204).json({"message": "error"})
     }
 });
 
@@ -278,8 +264,8 @@ app.get('/productos/nombres/:id', (req, res) => {
         // Devuelve el nombre del producto
         res.status(200).json({ nombre: producto.nombre });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        console.error(error)
+        res.status(204).json({"message": "error"})
     }
 });
 
@@ -299,8 +285,8 @@ app.get('/usuarios/telefono/:id', (req, res) => {
         // Devuelve el telefono del usuario
         res.status(200).json({ telefono: usuario.telefono });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        console.error(error)
+        res.status(204).json({"message": "error"})
     }
 });
 
@@ -320,14 +306,14 @@ app.get('/usuarios/nombres/:id', (req, res) => {
         // Devuelve el telefono del usuario
         res.status(200).json({ nombre: usuario.nombre });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        console.error(error)
+        res.status(204).json({"message": "error"})
     }
 });
 
-// Ejercicio 10 //
+// Ejercicio 10 
 
-app.get('/productos/total/', (req, res) => {
+app.get('/products/total/', (req, res) => {
     try {
         // Calcula la sumatoria de los precios individuales de todos los productos
         const precioTotal = datos.productos.reduce((total, producto) => total + producto.precio, 0);
@@ -335,11 +321,10 @@ app.get('/productos/total/', (req, res) => {
         // Devuelve el precio total
         res.status(200).json({ precioTotal: precioTotal.toFixed(2) }); // Limita el número de decimales a 2
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Error interno del servidor' });
+        console.error(error)
+        res.status(204).json({"message": "error"})
     }
 });
-
 
 
 app.use((req, res) => {
