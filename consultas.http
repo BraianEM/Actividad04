@@ -52,7 +52,7 @@ Content-Type: application/json
 
 ### Actualizacion de un usuario
 
-PATCH http://localhost:1234/usuarios/5
+PATCH http://localhost:1234/usuarios/10
 Content-Type: application/json
 
 {
