@@ -8,6 +8,7 @@ GET http://localhost:1234/productos/3/
 ### Agregado de un producto nuevo, el body lleva el json con el objeto
 POST http://localhost:1234/productos
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzdWFyaW8iOiJKdWFuUGVyZXoiLCJuaXZlbCI6MSwiZXhwIjoxNjk3MTgzNzE5Mjk0LCJpYXQiOjE2OTcxODM2NTl9.Rsq4KbQycQVznZz89DYFTP7EokHtwgWpo-EWi-Jsb-w
 
 {
     "id": 11,
@@ -20,6 +21,7 @@ Content-Type: application/json
 
 PATCH http://localhost:1234/productos/10
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzdWFyaW8iOiJKdWFuUGVyZXoiLCJuaXZlbCI6MSwiZXhwIjoxNjk3MTg0MzE5MDU0LCJpYXQiOjE2OTcxODQyNTl9.tcIpTpfPBMZyxpEG0wuRg33arrfS27Qv4LhKpOLRZG4
 
 {
     "nombre": "Mixer multiuso ACME PODEROSO"
@@ -27,6 +29,7 @@ Content-Type: application/json
 
 ### Borrado de un producto
 DELETE http://localhost:1234/productos/11
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzdWFyaW8iOiJKdWFuUGVyZXoiLCJuaXZlbCI6MSwiZXhwIjoxNjk3MTg0MzE5MDU0LCJpYXQiOjE2OTcxODQyNTl9.tcIpTpfPBMZyxpEG0wuRg33arrfS27Qv4LhKpOLRZG4
 
 
 ### Obtencion de todos los usuarios
@@ -41,6 +44,7 @@ GET http://localhost:1234/usuarios/5
 ### Agregado de un usuario nuevo, el body lleva el json con el objeto
 POST http://localhost:1234/usuarios
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzdWFyaW8iOiJKdWFuUGVyZXoiLCJuaXZlbCI6MSwiZXhwIjoxNjk3MTg0NDA2MTMwLCJpYXQiOjE2OTcxODQzNDZ9.U_MG6MBAT1HK3ee9jf2_9r_rlGUzhp1mR13DzGy3UtA
 
 {
     "id": 11,
@@ -54,6 +58,7 @@ Content-Type: application/json
 
 PATCH http://localhost:1234/usuarios/10
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzdWFyaW8iOiJKdWFuUGVyZXoiLCJuaXZlbCI6MSwiZXhwIjoxNjk3MTg0NDA2MTMwLCJpYXQiOjE2OTcxODQzNDZ9.U_MG6MBAT1HK3ee9jf2_9r_rlGUzhp1mR13DzGy3UtA
 
 {
     "nombre" : "Quins Nix"
@@ -61,6 +66,7 @@ Content-Type: application/json
 
 ### Borrado de un usuario
 DELETE http://localhost:1234/usuarios/11
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInVzdWFyaW8iOiJKdWFuUGVyZXoiLCJuaXZlbCI6MSwiZXhwIjoxNjk3MTg0NDA2MTMwLCJpYXQiOjE2OTcxODQzNDZ9.U_MG6MBAT1HK3ee9jf2_9r_rlGUzhp1mR13DzGy3UtA
 
 ### Obtener el precio de un producto que se indica por id
 
@@ -81,3 +87,13 @@ GET http://localhost:1234/usuarios/nombres/7
 
 ### Obtener el precio total de stock de productos actuales
 GET http://localhost:1234/products/total/
+
+### Request desde el formulario ed logueo en el frontend
+
+POST http://localhost:1234/auth
+Content-Type: application/json
+
+    {
+        "usuario": "JuanPerez",
+        "password": "contraseña1"
+    }

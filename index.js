@@ -2,8 +2,10 @@ import { createRequire } from 'node:module'
 import express from 'express'
 
 import db from './db/connection.js'
+import jwt from 'jsonwebtoken'
 import Producto from './models/producto.js'
 import Usuario from './models/usuarios.js'
+
 
 const require = createRequire(import.meta.url)
 const datos = require('./datos.json')
@@ -15,8 +17,107 @@ const app = express()
 
 const exposedPort = 1234
 
+function autenticacionDeToken(req, res, next){
+    const headerAuthorization = req.headers['authorization']
+    const tokenRecibido = headerAuthorization.split(" ")[1]
+
+    if (tokenRecibido == null) {
+        return res.status(401).json({message: 'Token no valido'})
+    }
+
+    let payload = null
+
+    try{
+        payload = jwt.verify(tokenRecibido, process.env.SECRET_KEY)
+    } catch (error) {
+        return res.status(401).json({message: 'Token no valido'})
+    }
+
+    if (Date.now() > payload.exp){
+        return res.status(401).json({message: 'Token caducado'})
+    }
+
+    req.usuario = payload.sub
+
+    next()
+} 
+
+app.use((req, res, next) => {
+    if (req.method !== 'POST'){ return next()}
+
+    if (req.headers['content-type'] !== 'application/json') { return next()}
+
+    let bodyTemp = ''
+
+    req.on('data', (chunk) => {
+        bodyTemp += chunk.toString()
+    })
+
+    req.on('end', () => {
+        const data = JSON.parse(bodyTemp)
+        req.body = data
+        next()
+    })
+})
+
+app.use((req, res, next) => {
+    if (req.method!== 'PATCH') { return next()}
+
+    if (req.headers['content-type'] !== 'application/json') { return next()}
+
+    let bodyTemp = ''
+
+    req.on('data', (chunk) => {
+        bodyTemp += chunk.toString()
+    })
+
+    req.on('end', () => {
+        const data = JSON.parse(bodyTemp)
+        req.body = data
+        next()
+    })
+})
+
 app.get('/', (req, res) => {
     res.status(200).send(html)
+})
+
+
+/// endpoint logeo
+app.post('/auth', async (req, res) => {
+
+    const usuarioABuscar = req.body.usuario
+    const passwordRecibida = req.body.password
+    let usuarioEncontrado = ''
+
+    try {
+        usuarioEncontrado = await Usuario.findAll({where:{usuario: usuarioABuscar}})
+
+        if (usuarioEncontrado == '') { return res.status(400).json({message: 'Usuario no valido'})}
+    } catch (error) {
+        return res.status(400).json({message: 'Usuario no valido'})
+    }
+
+    if (usuarioEncontrado[0].password !== passwordRecibida){
+        return res.status(400).json({message: 'Contraseña no valida'})
+    }
+
+    // Generacion del token
+
+    const sub = usuarioEncontrado[0].id
+    const usuario = usuarioEncontrado[0].usuario
+    const nivel = usuarioEncontrado[0].nivel
+
+    // Firma y construccion del token
+    const token = jwt.sign({
+        sub,
+        usuario,
+        nivel,
+        exp: Date.now() + (60*1000)
+    }, process.env.SECRET_KEY)
+
+    res.status(200).json({ accessToken: token })
+
 })
 
 
@@ -43,20 +144,12 @@ app.get('/productos/:id', async (req, res) => {
     }
 })
 
-app.post('/productos', (req, res) => {
+app.post('/productos', autenticacionDeToken, async (req, res) => {
     try {
-        let bodyTemp = ''
-
-        req.on('data', (chunk) => {
-            bodyTemp += chunk.toString()
-        })
-    
-        req.on('end', async () => {
-            const data = JSON.parse(bodyTemp)
-            req.body = data
+        
             const productoAGuardar = new Producto(req.body)
             await productoAGuardar.save()
-        })
+        
     
         res.status(201).json({"message": "success"})
 
@@ -65,7 +158,7 @@ app.post('/productos', (req, res) => {
     }
 })
 
-app.patch('/productos/:id', async (req, res) => {
+app.patch('/productos/:id', autenticacionDeToken, async (req, res) => {
     let idProductoAEditar = parseInt(req.params.id)
     let productoAActualizar = await Producto.findByPk(idProductoAEditar)
 
@@ -73,23 +166,14 @@ app.patch('/productos/:id', async (req, res) => {
         res.status(204).json({"message":"Producto no encontrado"})
     }
 
-    let bodyTemp = ''
-
-    req.on('data', (chunk) => {
-        bodyTemp += chunk.toString()
-    })
-
-    req.on('end', async () => {
-        const data = JSON.parse(bodyTemp)
-        req.body = data
 
         await productoAActualizar.update(req.body)
       
         res.status(200).send('Producto actualizado')
-    })
+    
 })
 
-app.delete('/productos/:id', async (req, res) => {
+app.delete('/productos/:id', autenticacionDeToken, async (req, res) => {
     let idProductoABorrar = parseInt(req.params.id)
     let productoABorrar = await Producto.findByPk(idProductoABorrar)
 
@@ -141,20 +225,12 @@ app.get('/usuarios/:id', async (req, res) => {
 
 // ejercicio 3 //
 
-app.post('/usuarios', (req, res) => {
+app.post('/usuarios', autenticacionDeToken, async (req, res) => {
     try {
-        let bodyTemp = ''
-
-        req.on('data', (chunk) => {
-            bodyTemp += chunk.toString()
-        })
-    
-        req.on('end', async () => {
-            const data = JSON.parse(bodyTemp)
-            req.body = data
+       
             const productosAGuardar = new Usuario(req.body)
             await productosAGuardar.save()
-        })
+        
     
         res.status(201).json({"message": "success"})
 
@@ -165,32 +241,21 @@ app.post('/usuarios', (req, res) => {
 
 // ejercicio 4 //
 
-app.patch('/usuarios/:id', async (req, res) => {
+app.patch('/usuarios/:id', autenticacionDeToken, async (req, res) => {
     let idUserAEditar = parseInt(req.params.id)
     let userAActualizar = await Usuario.findByPk(idUserAEditar)
 
     if (!userAActualizar) {
         res.status(204).json({"message":"Usuario no encontrado"})
     }
-
-    let bodyTemp = ''
-
-    req.on('data', (chunk) => {
-        bodyTemp += chunk.toString()
-    })
-
-    req.on('end', async () => {
-        const data = JSON.parse(bodyTemp)
-        req.body = data
         
         await userAActualizar.update(req.body)
 
         res.status(200).send('Usuario actualizado')
-    })
 })
 
 // Ejercicio 5 //
-app.delete('/usuarios/:id', async (req, res) => {
+app.delete('/usuarios/:id', autenticacionDeToken, async (req, res) => {
     let idUserABorrar = parseInt(req.params.id)
     let userABorrar = await Usuario.findByPk(idUserABorrar)
 
